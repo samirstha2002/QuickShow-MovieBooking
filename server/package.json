@@ -12,11 +12,13 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
+    "@clerk/express": "^2.1.15",
     "axios": "^1.16.0",
     "cloudinary": "^2.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "inngest": "^4.3.0",
     "mongoose": "^9.6.2"
   },
   "devDependencies": {
