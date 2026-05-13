@@ -6,7 +6,7 @@ export const protectAdmin = async (req, res, next) => {
     const userId = auth?.userId;
 
     if (!userId) {
-      return res.status(401).json({
+      return res.json({
         success: false,
         message: "Not authenticated",
       });
@@ -17,7 +17,7 @@ export const protectAdmin = async (req, res, next) => {
     const role = user?.privateMetadata?.role;
 
     if (role !== "admin") {
-      return res.status(403).json({
+      return res.json({
         success: false,
         message: "Not authorized",
       });
