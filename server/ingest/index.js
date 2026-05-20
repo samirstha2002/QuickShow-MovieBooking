@@ -228,27 +228,40 @@ const sendNewShowNotifications = inngest.createFunction(
     triggers: [{ event: "app/show.added" }],
   },
   async ({ event }) => {
-    const { movieTitle} = event.data;
-    const users=await User.find({})
-    for(const user of users){
-      const userEmail=user.email,
-      const userName=user.name
-      const subject=`<div style="font-family:Arial,sans-serif; padding:20px;">
-      <h2>Hi ${userName},</h2>
-      <p>We have just added a new show to our library:</p>
-      <h3 style="color:#F84565;">"${movieTitle}"</h3>
-      <p>Visit our Website</p>
-      <br/>
-      <p>Thanks,<br/>QuickShow Team</p>
-      </div>`;
+    const { movieTitle } = event.data;
 
-      await sendEmail({to:userEmail,
-      subject,
-      body,  
-    })
+    const users = await User.find({});
+
+    for (const user of users) {
+      const userEmail = user.email;
+      const userName = user.name;
+
+      const subject = `New Show Added: "${movieTitle}" 🎬`;
+
+      const body = `
+        <div style="font-family:Arial,sans-serif; padding:20px;">
+          <h2>Hi ${userName},</h2>
+
+          <p>We have just added a new show to our library:</p>
+
+          <h3 style="color:#F84565;">"${movieTitle}"</h3>
+
+          <p>Visit our website to book your seat now!</p>
+
+          <br/>
+
+          <p>Thanks,<br/>QuickShow Team</p>
+        </div>
+      `;
+
+      await sendEmail({
+        to: userEmail,
+        subject,
+        body,
+      });
     }
-    return {message:'Notification sent'}
-  
+
+    return { message: "Notification sent" };
   },
 );
 export const functions = [
@@ -258,5 +271,5 @@ export const functions = [
   releaseSeatsAndDeleteBooking,
   sendBookingConfirmationEmail,
   sendShowReminders,
-  sendNewShowNotifications
+  sendNewShowNotifications,
 ];
