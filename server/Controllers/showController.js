@@ -1,6 +1,22 @@
 import axios from "axios";
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
+import { inngest } from "../ingest/index.js";
+
+const getTrailerFromTMDB = async (movieId) => {
+  const { data } = await axios.get(
+    `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+    {
+      headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` },
+    },
+  );
+
+  const trailer = data.results.find(
+    (v) => v.type === "Trailer" && v.site === "YouTube",
+  );
+
+  return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null;
+};
 // Api to get playing movies from tmdb
 export const getNowPlayingMovies = async (req, res) => {
   try {
@@ -39,6 +55,7 @@ export const addShow = async (req, res) => {
       ]);
       const movieApiData = movieDetailsResponse.data;
       const movieCreditsData = movieCreditsResponse.data;
+      const trailerUrl = await getTrailerFromTMDB(movieId);
 
       const movieDetails = {
         _id: movieId,
@@ -53,6 +70,7 @@ export const addShow = async (req, res) => {
         tagline: movieApiData.tagline || "",
         vote_average: movieApiData.vote_average,
         runtime: movieApiData.runtime,
+        trailerUrl,
       };
 
       //Add movie to database
@@ -105,12 +123,18 @@ export const getShows = async (req, res) => {
       .populate("movie")
       .sort({ showDateTime: 1 });
 
-    //filter unique shows
-    const uniqueShows = new Set(shows.map((show) => show.movie));
-    res.json({
-      success: true,
-      shows: Array.from(uniqueShows),
+    // Filter out null movies, then deduplicate by movie _id
+    const seen = new Set();
+    const uniqueShows = [];
+
+    shows.forEach((show) => {
+      if (show.movie && !seen.has(show.movie._id.toString())) {
+        seen.add(show.movie._id.toString());
+        uniqueShows.push(show.movie);
+      }
     });
+
+    res.json({ success: true, shows: uniqueShows });
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });

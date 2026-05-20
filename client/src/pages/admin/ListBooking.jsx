@@ -49,22 +49,26 @@ function ListBooking() {
             </tr>
           </thead>
           <tbody className="text-sm font-light">
-            {bookings.map((item, index) => (
-              <tr
-                key={index}
-                className="border-b border-primary/10 bg-primary/5 even:bg-primary/10"
-              >
-                <td className="p-2 mib-w-45 pl-5">{item.user.name}</td>
-                <td className="p-2">{item.show.movie.title}</td>
+            {bookings
+              .filter((item) => item.show?.movie) // 👈 add this
+              .map((item, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-primary/10 bg-primary/5 even:bg-primary/10"
+                >
+                  <td className="p-2 mib-w-45 pl-5">{item.user.name}</td>
+                  <td className="p-2">{item.show.movie.title}</td>
 
-                <td className="p-2">{dateFormat(item.show.showDateTime)}</td>
-                <td className="p-2">{Object.keys(item.bookedSeats).length}</td>
-                <td className="p-2">
-                  {currency}
-                  {item.amount}
-                </td>
-              </tr>
-            ))}
+                  <td className="p-2">{dateFormat(item.show.showDateTime)}</td>
+                  <td className="p-2">
+                    {Object.keys(item.bookedSeats).length}
+                  </td>
+                  <td className="p-2">
+                    {currency}
+                    {item.amount}
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

@@ -7,9 +7,9 @@ function Footer() {
         <div className="md:max-w-96">
           <img alt="" className="h-11" src={assets.logo} />
           <p className="mt-6 text-sm">
-            Lorem Ipsum has been the industry's standard dummy text ever since
-            the 1500s, when an unknown printer took a galley of type and
-            scrambled it to make a type specimen book.
+            QuickShow is your go-to platform for booking movie tickets fast and
+            easy. We bring you the latest now-playing movies, real-time seat
+            selection, and a seamless checkout experience — all in one place.
           </p>
           <div className="flex items-center gap-2 mt-4">
             <img

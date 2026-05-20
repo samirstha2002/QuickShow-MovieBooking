@@ -7,11 +7,21 @@ import { useAppContext } from "../context/AppContext";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUser();
+  const [searchOpen, setSearchOpen] = useState(false); // 👈
+  const [searchQuery, setSearchQuery] = useState(""); // 👈
+  const { user, isLoaded } = useUser();
   const { openSignIn } = useClerk();
-
   const navigate = useNavigate();
   const { favouriteMovies } = useAppContext();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    navigate(`/movies?search=${encodeURIComponent(searchQuery.trim())}`);
+    setSearchQuery("");
+    setSearchOpen(false);
+  };
+
   return (
     <div className="fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
       <Link to="/" className="max-md:flex-1">
@@ -26,7 +36,8 @@ function Navbar() {
         />
         <Link
           onClick={() => {
-            (scrollTo(0, 0), setIsOpen(false));
+            scrollTo(0, 0);
+            setIsOpen(false);
           }}
           to="/"
         >
@@ -42,22 +53,13 @@ function Navbar() {
           Movies
         </Link>
         <Link
-          to="/"
+          to="/about"
           onClick={() => {
             scrollTo(0, 0);
             setIsOpen(false);
           }}
         >
-          Theaters
-        </Link>
-        <Link
-          to="/"
-          onClick={() => {
-            scrollTo(0, 0);
-            setIsOpen(false);
-          }}
-        >
-          Releases
+          About Us
         </Link>
         {favouriteMovies.length > 0 && (
           <Link
@@ -72,9 +74,34 @@ function Navbar() {
         )}
       </div>
 
-      <div className="flex items-center gap-8">
-        <SearchIcon className="max-md:hidden w-6 h-6 cursor-pointer " />
-        {!user ? (
+      <div className="flex items-center gap-4">
+        {/* 👇 search bar */}
+        <form
+          onSubmit={handleSearch}
+          className={`flex items-center gap-2 bg-white/10 border border-gray-300/20 rounded-full px-3 py-1.5 transition-all duration-300 ${searchOpen ? "w-48 md:w-64 opacity-100" : "w-0 opacity-0 pointer-events-none"}`}
+        >
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search movies..."
+            className="bg-transparent outline-none text-sm text-white placeholder-gray-400 w-full"
+            autoFocus={searchOpen}
+          />
+          <button type="submit">
+            <SearchIcon className="w-4 h-4 text-gray-300" />
+          </button>
+        </form>
+
+        {/* 👇 toggle search */}
+        <SearchIcon
+          className="max-md:hidden w-6 h-6 cursor-pointer"
+          onClick={() => setSearchOpen(!searchOpen)}
+        />
+
+        {!isLoaded ? (
+          <div className="px-4 py-1 sm:px-7 sm:py-2 w-20 h-9 rounded-full bg-white/10 animate-pulse" />
+        ) : !user ? (
           <button
             onClick={openSignIn}
             className="px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer"

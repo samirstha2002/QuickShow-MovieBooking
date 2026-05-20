@@ -17,6 +17,7 @@ import Layout from "./pages/admin/Layout";
 import { useAppContext } from "./context/AppContext";
 import { SignIn } from "@clerk/react";
 import Loading from "./components/Loading";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   const isAdminRoute = useLocation().pathname.startsWith("/admin");
@@ -28,6 +29,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/movies" element={<Movies />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/movies/:id" element={<MovieDetails />} />
         <Route path="/movies/:id/:date" element={<SeatLayout />} />
         <Route path="/my-bookings" element={<MyBookings />} />
